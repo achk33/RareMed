@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin - RareMed AI</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/schms.css" />
+</head>
+<body>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2>Admin</h2>
+      <select class="form-select form-select-sm schms-lang-switch" data-lang-switcher style="width:auto;">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+    <div class="kpi-grid mb-4">
+      <div class="kpi-item">
+        <h3 data-i18n="patients">Patients</h3>
+        <div class="value" id="kpiPatients">0</div>
+      </div>
+      <div class="kpi-item">
+        <h3 data-i18n="alerts">Alertes</h3>
+        <div class="value" id="kpiAlerts">0</div>
+      </div>
+      <div class="kpi-item">
+        <h3 data-i18n="measurements">Mesures</h3>
+        <div class="value" id="kpiMeasurements">0</div>
+      </div>
+      <div class="kpi-item">
+        <h3 data-i18n="doctors">Médecins</h3>
+        <div class="value" id="kpiDoctors">0</div>
+      </div>
+    </div>
+    <h4>Gestion Patients</h4>
+    <table class="table table-sm" id="patientListTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>Nom</th><th>Sexe</th><th>Âge</th><th>Téléphone</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="patientTableBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+    </table>
+    <a class="btn btn-primary btn-sm" href="add-patient.html" data-i18n="add_patient">Add Patient</a>
+  </div>
+  <script src="assets/js/schms/data.js"></script>
+  <script src="assets/js/schms/api.js"></script>
+  <script src="assets/js/schms/i18n.js"></script>
+  <script src="assets/js/schms/ui.js"></script>
+</body>
+</html>

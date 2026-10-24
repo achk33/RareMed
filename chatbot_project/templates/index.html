@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RareMed AI - Clinical Co-Pilot | Gemini</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-right: 1px solid #e0e0e0;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .sidebar select, .sidebar input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+
+        .chat-header {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .chat-subheader {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+
+        .chat-message.human {
+            background-color: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-message.ai {
+            background-color: #f1f1f1;
+            margin-right: auto;
+        }
+
+        .analysis-status {
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .analysis-hypothesis {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 8px;
+            padding: 10px;
+        }
+
+        .evidence-path {
+            color: #555;
+            font-family: monospace;
+            overflow-wrap: anywhere;
+        }
+
+        .input-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            resize: none;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .send-button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .send-button:hover {
+            background-color: #0056b3;
+        }
+
+        .send-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Customization</h2>
+        <select id="model-select">
+            <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+            <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+        </select>
+        <input type="range" id="memory-length" min="1" max="10" value="5">
+        <label for="memory-length">Memory Length: <span id="memory-value">5</span></label>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">RareMed AI - Clinical Co-Pilot</div>
+        <div class="chat-subheader">Analyse clinique fondée sur le Knowledge Graph médical.</div>
+        <div class="chat-history" id="chat-history">
+        </div>
+        <div class="input-area">
+            <textarea class="chat-input" id="chat-input" rows="1" placeholder="Ask a question..."></textarea>
+            <button class="send-button" id="send-button">Send</button>
+        </div>
+        <div class="error-message" id="error-message"></div>
+    </div>
+
+    <script>
+        const textarea = document.getElementById('chat-input');
+        textarea.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = `${this.scrollHeight}px`;
+        });
+
+        const memorySlider = document.getElementById('memory-length');
+        const memoryValue = document.getElementById('memory-value');
+        memorySlider.addEventListener('input', function () {
+            memoryValue.textContent = this.value;
+        });
+
+        let messages = [];
+
+        const sendButton = document.getElementById('send-button');
+        const chatHistory = document.getElementById('chat-history');
+        const chatInput = document.getElementById('chat-input');
+        const errorMessage = document.getElementById('error-message');
+        const modelSelect = document.getElementById('model-select');
+        const memoryLength = document.getElementById('memory-length');
+
+        function appendAnalysisMessage(result) {
+            const message = document.createElement('div');
+            message.className = 'chat-message ai';
+
+            if (!result || typeof result !== 'object' || !Array.isArray(result.hypotheses)) {
+                message.textContent = JSON.stringify(result, null, 2);
+                chatHistory.appendChild(message);
+                return;
+            }
+
+            const status = document.createElement('div');
+            status.className = 'analysis-status';
+            status.textContent = `Statut : ${result.status || 'Inconnu'}`;
+            message.appendChild(status);
+
+            const heading = document.createElement('strong');
+            heading.textContent = 'Hypothèses';
+            message.appendChild(heading);
+
+            if (result.hypotheses.length === 0) {
+                const none = document.createElement('p');
+                none.textContent = 'Aucune hypothèse étayée par le graphe.';
+                message.appendChild(none);
+            }
+
+            result.hypotheses.forEach(hypothesis => {
+                const item = document.createElement('div');
+                item.className = 'analysis-hypothesis';
+
+                const name = document.createElement('strong');
+                name.textContent = hypothesis.name || hypothesis.disease || 'Hypothèse';
+                item.appendChild(name);
+
+                const confidence = hypothesis.confidence ?? hypothesis.confidence_score;
+                const score = document.createElement('div');
+                score.textContent = `Score de confiance : ${confidence === undefined ? 'Non fourni' : confidence}`;
+                item.appendChild(score);
+
+                const evidence = document.createElement('div');
+                evidence.className = 'evidence-path';
+                const path = hypothesis.evidence_path;
+                evidence.textContent = `Evidence Path : ${Array.isArray(path)
+                    ? path.map(node => typeof node === 'string' ? node : JSON.stringify(node)).join(' → ')
+                    : typeof path === 'string' ? path : JSON.stringify(path ?? 'Non fourni')}`;
+                item.appendChild(evidence);
+
+                message.appendChild(item);
+            });
+
+            if (typeof result.question === 'string' && result.question) {
+                const question = document.createElement('p');
+                question.className = 'mt-2 mb-0';
+                question.textContent = `Question discriminante : ${result.question}`;
+                message.appendChild(question);
+            }
+
+            chatHistory.appendChild(message);
+        }
+
+        sendButton.addEventListener('click', async function () {
+            const userQuestion = chatInput.value.trim();
+            if (!userQuestion) return;
+
+            sendButton.disabled = true;
+            errorMessage.textContent = '';
+
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-message human';
+            userMessage.textContent = userQuestion;
+            chatHistory.appendChild(userMessage);
+
+            messages.push({ role: 'user', content: userQuestion });
+
+            const maxMemory = parseInt(memoryLength.value);
+            if (messages.length > maxMemory * 2) {
+                messages = messages.slice(-maxMemory * 2);
+            }
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: modelSelect.value,
+                        messages: messages
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to fetch response');
+                }
+
+                const aiResponse = JSON.stringify(data);
+                appendAnalysisMessage(data);
+
+                messages.push({ role: 'assistant', content: aiResponse });
+
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            } catch (error) {
+                errorMessage.textContent = `Error: ${error.message}`;
+                console.error('API Error:', error);
+            } finally {
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
+                sendButton.disabled = false;
+            }
+        });
+
+        chatInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendButton.click();
+            }
+        });
+    </script>
+</body>
+</html>

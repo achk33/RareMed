@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RareMed AI - Clinical Co-Pilot | Détail Patient</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/schms.css" />
+</head>
+<body>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2>Détails Patient</h2>
+      <div>
+        <select class="form-select form-select-sm schms-lang-switch" data-lang-switcher style="width:auto; display:inline-block;">
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <a href="patients.html" class="btn btn-secondary btn-sm ms-2">Retour</a>
+      </div>
+    </div>
+    <div id="patientDetail" class="mb-4">
+      <div class="alert alert-info">Chargement...</div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/schms/data.js"></script>
+  <script src="assets/js/schms/api.js"></script>
+  <script src="assets/js/schms/i18n.js"></script>
+  <script src="assets/js/schms/ui.js"></script>
+</body>
+</html>

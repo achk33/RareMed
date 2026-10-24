@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title data-i18n="chw_dashboard">Agent de santé communautaire</title>
+<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/style.css"/>
+<link rel="stylesheet" href="assets/css/schms.css"/>
+</head>
+<body>
+<div class="main-wrapper">
+  <div class="header">
+    <div class="header-left"><a href="index.html" class="logo"><img src="assets/img/logo.png" width="35" height="35" alt=""> <span>RareMed</span></a></div>
+    <a id="toggle_btn" href="javascript:void(0);"><img src="assets/img/icons/bar-icon.svg" alt=""></a>
+    <ul class="nav user-menu float-end"><li class="nav-item"><select class="form-select form-select-sm schms-lang-switch mt-2" data-lang-switcher><option value="fr">Français</option><option value="en">English</option><option value="ar">العربية</option></select></li></ul>
+  </div>
+  <div class="sidebar" id="sidebar"><div class="sidebar-inner slimscroll"><div id="sidebar-menu" class="sidebar-menu"><ul><li><a href="index.html">Dashboard</a></li><li class="active"><a href="chw.html" data-i18n="chw_dashboard">Agent de santé communautaire</a></li><li><a href="patients.html" data-i18n="patients">Patients</a></li></ul></div></div></div>
+  <div class="page-wrapper">
+    <div class="content container-fluid">
+      <div class="page-header"><h3 class="mb-1" data-i18n="chw_dashboard">Agent de santé communautaire</h3></div>
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center"><h5 class="mb-0" data-i18n="patients">Patients</h5><div id="syncStatusBox"></div></div>
+            <div class="card-body">
+              <div class="d-flex schms-filters align-items-center gap-2 mb-3 flex-wrap">
+                <select class="form-select form-select-sm" data-filter-condition><option value="">Toutes maladies</option><option value="diabete">Diabète</option><option value="hypertension">Hypertension</option></select>
+                <input type="text" class="form-control form-control-sm" placeholder="Zone" data-filter-zone />
+                <select class="form-select form-select-sm" data-filter-sync><option value="">Sync</option><option value="pending">Pending</option><option value="error">Error</option><option value="synced">Synced</option></select>
+                <select class="form-select form-select-sm" data-filter-chw><option value="">CHW</option><option value="CHW01">CHW01</option><option value="CHW02">CHW02</option></select>
+                <button class="btn btn-outline-secondary btn-sm" data-export-global data-i18n="export_csv">Export CSV</button>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-sm" id="patientListTable"><thead><tr><th>ID</th><th data-i18n="patients">Patients</th><th>Sync</th><th>Maladies</th><th>CHW</th><th></th></tr></thead><tbody id="patientTableBody"><tr><td colspan="6" class="text-center">Loading...</td></tr></tbody></table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-header"><h5 class="mb-0" data-i18n="add_vital">Ajouter mesure vitale</h5></div>
+            <div class="card-body">
+              <form id="addMeasurementForm">
+                <div class="row g-2">
+                  <div class="col-6"><label class="form-label">Patient</label><select id="measurementPatient" name="patientId" class="form-select form-select-sm"></select></div>
+                  <div class="col-6"><label class="form-label" data-i18n="blood_pressure">Pression</label><div class="input-group input-group-sm"><input name="systolic" type="number" placeholder="Sys" class="form-control"/><input name="diastolic" type="number" placeholder="Dia" class="form-control"/></div></div>
+                  <div class="col-4"><label class="form-label" data-i18n="glucose">Glycémie</label><input name="glucose" type="number" class="form-control form-control-sm"/></div>
+                  <div class="col-4"><label class="form-label" data-i18n="spo2">SpO₂</label><input name="spo2" type="number" class="form-control form-control-sm"/></div>
+                  <div class="col-4"><label class="form-label" data-i18n="heart_rate">FC</label><input name="heartRate" type="number" class="form-control form-control-sm"/></div>
+                  <div class="col-4"><label class="form-label" data-i18n="temperature">Temp</label><input name="temperature" type="number" step="0.1" class="form-control form-control-sm"/></div>
+                </div>
+                <div class="mt-3"><button class="btn btn-primary btn-sm" data-i18n="add_measurement">Ajouter Mesure</button> <button class="btn btn-outline-secondary btn-sm" type="button">Synchroniser depuis IoT</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-header"><h5 class="mb-0" data-i18n="vitals">Signes vitaux</h5></div>
+            <div class="card-body">
+              <div class="vital-cards" id="chwVitals"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="assets/js/jquery-3.7.1.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="assets/js/schms/data.js"></script>
+<script src="assets/js/schms/api.js"></script>
+<script src="assets/js/schms/i18n.js"></script>
+<script src="assets/js/schms/ui.js"></script>
+<script>
+// Render vitals mini-cards for latest measurements of all patients
+(async function(){
+  const vitalsBox = document.getElementById('chwVitals');
+  const pts = await SCHMS_API.fetchPatients();
+  const rows = [];
+  for(const p of pts){
+    const ms = await SCHMS_API.fetchMeasurements(p.id);
+    if(!ms.length) continue;
+    const last = ms[ms.length-1];
+    rows.push(`<div class='vital-card'><h6>${p.firstName}</h6><div class='vital-value'>${last.heartRate} bpm</div><small class='text-muted'>FC</small></div>`);
+  }
+  vitalsBox.innerHTML = rows.join('');
+})();
+</script>
+</body>
+</html>

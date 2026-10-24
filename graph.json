@@ -1,0 +1,14 @@
+{
+  "diseases": [
+    {
+      "id": "ORPHA:355",
+      "name": "Maladie de Gaucher",
+      "symptoms_hpo": [
+        {"code": "HP:0001744", "name": "Splénomégalie"},
+        {"code": "HP:0002653", "name": "Douleur osseuse"},
+        {"code": "HP:0001878", "name": "Fatigue"}
+      ],
+      "diagnostic_test": "Activité de l'enzyme glucocérébrosidase"
+    }
+  ]
+}

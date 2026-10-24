@@ -1,0 +1,39 @@
+/* SCHMS custom styles */
+:root { --schms-accent:#0d6efd; }
+body.schms body, body.schms { font-family: 'Inter', Arial, sans-serif; }
+.badge { font-size: .65rem; }
+.schms-kpi-card { transition: box-shadow .2s; }
+.schms-kpi-card:hover { box-shadow:0 0.5rem 1rem rgba(0,0,0,.1); }
+.schms-alerts-widget li { display:flex; justify-content:space-between; padding:.35rem .5rem; border-bottom:1px dotted #ddd; font-size:.85rem; }
+.schms-alerts-widget li span:first-child { flex:1; }
+.schms-lang-switch { width:auto; min-width:130px; }
+.table-sm td, .table-sm th { padding:.35rem .5rem; }
+@media (max-width:768px){
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media (min-width:769px){
+  .kpi-grid { grid-template-columns:repeat(4,1fr); }
+}
+.kpi-grid { display:grid; gap:1rem; }
+.kpi-item { background:#fff; border:1px solid #e5e5e5; border-radius:.5rem; padding:1rem; position:relative; }
+.kpi-item h3 { font-size:.85rem; text-transform:uppercase; letter-spacing:.05em; color:#666; margin:0 0 .25rem; }
+.kpi-item .value { font-size:1.65rem; font-weight:600; color:#111; }
+.placeholder-sync { background:repeating-linear-gradient(45deg,#f3f3f3,#f3f3f3 10px,#e2e2e2 10px,#e2e2e2 20px); height:48px; border-radius:.5rem; display:flex; align-items:center; justify-content:center; font-size:.8rem; color:#555; }
+/* Profile image frame enhancements */
+.profile-user-img { width:160px; height:160px; margin:0 auto; position:relative; }
+.profile-user-img img { width:100%; height:100%; object-fit:cover; border-radius:50%; border:4px solid var(--schms-accent); box-shadow:0 0 0 6px rgba(13,110,253,.15); background:#fff; }
+.profile-user-img .profile-upbtn { position:absolute; bottom:6px; right:6px; background:var(--schms-accent); border-radius:50%; width:38px; height:38px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.25); }
+.profile-user-img .profile-upbtn input { display:none; }
+.profile-image img { object-fit:cover; width:28px; height:28px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 2px var(--schms-accent); background:#fff; }
+.img-frame-rounded { border:3px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,.12); border-radius:1rem; overflow:hidden; }
+@media (max-width:576px){ .profile-user-img { width:120px; height:120px; } }
+/* Vital mini cards */
+.vital-cards { display:grid; gap:.75rem; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); }
+.vital-card { border:1px solid #e5e5e5; border-radius:.5rem; padding:.5rem .75rem; background:#fff; position:relative; }
+.vital-card h6 { font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; margin:0 0 .25rem; color:#666; }
+.vital-value { font-size:1.2rem; font-weight:600; }
+.vital-spark { height:30px; width:100%; }
+/* Filters */
+.schms-filters .form-select, .schms-filters .form-control { min-width:140px; }
+.sync-badge { font-size:.6rem; }
+@media (max-width:576px){ .schms-filters { flex-wrap:wrap; } }

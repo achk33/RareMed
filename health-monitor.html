@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
+    <title>Real-Time Health Monitor - Preclinic</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	
+	<!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+	
+	<!-- Feathericon CSS -->
+	<link rel="stylesheet" href="assets/css/feather.css">
+	
+	<!-- Main CSS -->
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS for Health Monitor -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .health-metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .health-metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 5px 0;
+            color: #2c3e50;
+        }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metric-status {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-top: 5px;
+            display: inline-block;
+            font-weight: 600;
+        }
+        
+        .status-normal {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .ecg-card {
+            border-left-color: #17a2b8;
+        }
+        
+        .bpm-card {
+            border-left-color: #dc3545;
+        }
+        
+        .bp-card {
+            border-left-color: #6f42c1;
+        }
+        
+        .temp-card {
+            border-left-color: #fd7e14;
+        }
+        
+        .metric-icon {
+            font-size: 1.2rem;
+            margin-right: 5px;
+            opacity: 0.7;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+            height: 280px;
+        }
+        
+        .chart-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1000;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .connected {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        .disconnected {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+        }
+        
+        .status-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+        }
+        
+        .status-item {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .status-item h6 {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2); }
+            50% { box-shadow: 0 4px 25px rgba(220, 53, 69, 0.4); }
+            100% { box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2); }
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .page-header h4 {
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .page-header h6 {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .compact-row {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <!-- Header -->
+        <div class="header">
+			<div class="header-left">
+				<a href="index.html" class="logo">
+					<img src="assets/img/logo.png" width="35" height="35" alt=""> <span>RareMed</span>
+				</a>
+			</div>
+			<a id="toggle_btn" href="javascript:void(0);"><img src="assets/img/icons/bar-icon.svg"  alt=""></a>
+            <a id="mobile_btn" class="mobile_btn float-start" href="#sidebar"><img src="assets/img/icons/bar-icon.svg"  alt=""></a>
+			
+            <ul class="nav user-menu float-end">
+				<li class="nav-item dropdown has-arrow user-profile-list">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-bs-toggle="dropdown">
+						<div class="user-names">
+							<h5>Health Monitor</h5>
+                        	<span>Real-Time</span>
+						</div>
+						<span class="user-img">
+							<img src="assets/img/user-06.jpg" alt="Admin">
+						</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+						<li class="submenu">
+							<a href="#"><span class="menu-side"><img src="assets/img/icons/menu-icon-01.svg" alt=""></span> <span> Dashboard </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								<li><a href="index.html">Admin Dashboard</a></li>
+								<li><a href="doctor-dashboard.html">Doctor Dashboard</a></li>
+								<li><a class="active" href="health-monitor.html">Health Monitor</a></li>
+							</ul>
+						</li>
+						<li><a href="doctor-dashboard.html"><span class="menu-side"><img src="assets/img/icons/menu-icon-02.svg" alt=""></span> <span>Back to Dashboard</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="page-wrapper">
+            <div class="content">
+                <!-- Connection Status -->
+                <div id="connectionStatus" class="connection-status disconnected">
+                    <i class="fas fa-wifi"></i> Connecting...
+                </div>
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4><i class="fas fa-heartbeat"></i> Real-Time Health Monitor</h4>
+                            <h6>Live ESP32 Sensor Data Stream</h6>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="status-panel" style="display: inline-block; margin: 0; padding: 10px;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6>Records</h6>
+                                        <div class="value" id="recordCount">0</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6>Updated</h6>
+                                        <div class="value" style="font-size: 0.8rem;" id="lastUpdate">Never</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Metrics Cards -->
+                <div class="row compact-row">
+                    <!-- ECG Signal -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                        <div class="health-metric-card ecg-card" id="ecgCard">
+                            <div class="metric-label">
+                                <i class="fas fa-heartbeat metric-icon"></i>ECG Signal
+                            </div>
+                            <div class="metric-value" id="ecgValue">---</div>
+                            <div class="metric-status status-normal" id="ecgStatus">Waiting...</div>
+                        </div>
+                    </div>
+
+                    <!-- Heart Rate -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                        <div class="health-metric-card bpm-card" id="bpmCard">
+                            <div class="metric-label">
+                                <i class="fas fa-heart metric-icon"></i>Heart Rate
+                            </div>
+                            <div class="metric-value" id="bpmValue">--- BPM</div>
+                            <div class="metric-status status-normal" id="bpmStatus">Waiting...</div>
+                        </div>
+                    </div>
+
+                    <!-- Blood Pressure -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                        <div class="health-metric-card bp-card" id="bpCard">
+                            <div class="metric-label">
+                                <i class="fas fa-tint metric-icon"></i>Blood Pressure
+                            </div>
+                            <div class="metric-value" id="bpValue">---/--- mmHg</div>
+                            <div class="metric-status status-normal" id="bpStatus">Waiting...</div>
+                        </div>
+                    </div>
+
+                    <!-- Temperature -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                        <div class="health-metric-card temp-card" id="tempCard">
+                            <div class="metric-label">
+                                <i class="fas fa-thermometer-half metric-icon"></i>Temperature
+                            </div>
+                            <div class="metric-value" id="tempValue">---°C</div>
+                            <div class="metric-status status-normal" id="tempStatus">Waiting...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row compact-row">
+                    <!-- ECG Chart -->
+                    <div class="col-lg-6 col-md-6">
+                        <div class="chart-container">
+                            <div class="chart-title">ECG Signal Trend</div>
+                            <canvas id="ecgChart" height="180"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Heart Rate Chart -->
+                    <div class="col-lg-6 col-md-6">
+                        <div class="chart-container">
+                            <div class="chart-title">Heart Rate Trend</div>
+                            <canvas id="bpmChart" height="180"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blood Pressure & Temperature Charts -->
+                <div class="row compact-row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="chart-container">
+                            <div class="chart-title">Blood Pressure Trend</div>
+                            <canvas id="bpChart" height="180"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6">
+                        <div class="chart-container">
+                            <div class="chart-title">Temperature Trend</div>
+                            <canvas id="tempChart" height="180"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/feather.min.js"></script>
+    <script src="assets/js/script.js"></script>
+
+    <!-- Health Monitor JavaScript -->
+    <script>
+        // Configuration
+        const API_URL = 'https://health-center-lac.vercel.app/api/data';
+        const UPDATE_INTERVAL = 2000; // 2 seconds
+        const MAX_CHART_POINTS = 20;
+
+        // Global variables
+        let recordCount = 0;
+        let isConnected = false;
+        let charts = {};
+        let healthData = {
+            ecg: [],
+            bpm: [],
+            systolic: [],
+            diastolic: [],
+            temperature: [],
+            timestamps: []
+        };
+
+        // Initialize charts
+        function initializeCharts() {
+            // ECG Chart
+            charts.ecg = new Chart(document.getElementById('ecgChart'), {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'ECG Signal',
+                        data: [],
+                        borderColor: '#11998e',
+                        backgroundColor: 'rgba(17, 153, 142, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 250,
+                            max: 850,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10 },
+                                maxTicksLimit: 6
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    elements: {
+                        point: { radius: 2 }
+                    }
+                }
+            });
+
+            // Heart Rate Chart
+            charts.bpm = new Chart(document.getElementById('bpmChart'), {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Heart Rate (BPM)',
+                        data: [],
+                        borderColor: '#fc4a1a',
+                        backgroundColor: 'rgba(252, 74, 26, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 40,
+                            max: 180,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10 },
+                                maxTicksLimit: 6
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    elements: {
+                        point: { radius: 2 }
+                    }
+                }
+            });
+
+            // Blood Pressure Chart
+            charts.bp = new Chart(document.getElementById('bpChart'), {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Systolic',
+                        data: [],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Diastolic',
+                        data: [],
+                        borderColor: '#764ba2',
+                        backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 50,
+                            max: 150,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10 },
+                                maxTicksLimit: 6
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { size: 11 },
+                                usePointStyle: true
+                            }
+                        }
+                    },
+                    elements: {
+                        point: { radius: 2 }
+                    }
+                }
+            });
+
+            // Temperature Chart
+            charts.temp = new Chart(document.getElementById('tempChart'), {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: [],
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 35,
+                            max: 40,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10 },
+                                maxTicksLimit: 6
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    elements: {
+                        point: { radius: 2 }
+                    }
+                }
+            });
+        }
+
+        // Update connection status
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            if (connected) {
+                statusElement.className = 'connection-status connected';
+                statusElement.innerHTML = '<i class="fas fa-wifi"></i> Connected';
+                isConnected = true;
+            } else {
+                statusElement.className = 'connection-status disconnected';
+                statusElement.innerHTML = '<i class="fas fa-wifi"></i> Disconnected';
+                isConnected = false;
+            }
+        }
+
+        // Get health status
+        function getHealthStatus(type, value, value2 = null) {
+            switch (type) {
+                case 'bpm':
+                    if (value >= 60 && value <= 100) return { status: 'Normal', class: 'status-normal' };
+                    if (value < 60) return { status: 'Low (Bradycardia)', class: 'status-warning' };
+                    return { status: 'High (Tachycardia)', class: 'status-danger' };
+                
+                case 'bp':
+                    if (value <= 120 && value2 <= 80) return { status: 'Normal', class: 'status-normal' };
+                    if (value <= 140 && value2 <= 90) return { status: 'Elevated', class: 'status-warning' };
+                    return { status: 'High', class: 'status-danger' };
+                
+                case 'temp':
+                    if (value >= 36.0 && value <= 37.2) return { status: 'Normal', class: 'status-normal' };
+                    if (value > 37.2) return { status: 'Fever', class: 'status-danger' };
+                    return { status: 'Low', class: 'status-warning' };
+                
+                case 'ecg':
+                    return { status: 'Active', class: 'status-normal' };
+                
+                default:
+                    return { status: 'Unknown', class: 'status-normal' };
+            }
+        }
+
+        // Update health metrics display
+        function updateHealthMetrics(data) {
+            // ECG
+            document.getElementById('ecgValue').textContent = data.ecg;
+            const ecgStatus = getHealthStatus('ecg', data.ecg);
+            const ecgStatusElement = document.getElementById('ecgStatus');
+            ecgStatusElement.textContent = ecgStatus.status;
+            ecgStatusElement.className = `metric-status ${ecgStatus.class}`;
+
+            // Heart Rate
+            document.getElementById('bpmValue').textContent = data.bpm + ' BPM';
+            const bpmStatus = getHealthStatus('bpm', data.bpm);
+            const bpmStatusElement = document.getElementById('bpmStatus');
+            bpmStatusElement.textContent = bpmStatus.status;
+            bpmStatusElement.className = `metric-status ${bpmStatus.class}`;
+
+            // Blood Pressure
+            document.getElementById('bpValue').textContent = `${data.systolic}/${data.diastolic} mmHg`;
+            const bpStatus = getHealthStatus('bp', data.systolic, data.diastolic);
+            const bpStatusElement = document.getElementById('bpStatus');
+            bpStatusElement.textContent = bpStatus.status;
+            bpStatusElement.className = `metric-status ${bpStatus.class}`;
+
+            // Temperature
+            document.getElementById('tempValue').textContent = data.temperature + '°C';
+            const tempStatus = getHealthStatus('temp', data.temperature);
+            const tempStatusElement = document.getElementById('tempStatus');
+            tempStatusElement.textContent = tempStatus.status;
+            tempStatusElement.className = `metric-status ${tempStatus.class}`;
+
+            // Add pulse animation for critical values
+            if (bpmStatus.class === 'status-danger' || tempStatus.class === 'status-danger') {
+                if (bpmStatus.class === 'status-danger') {
+                    document.getElementById('bpmCard').classList.add('pulse-animation');
+                } else {
+                    document.getElementById('bpmCard').classList.remove('pulse-animation');
+                }
+                
+                if (tempStatus.class === 'status-danger') {
+                    document.getElementById('tempCard').classList.add('pulse-animation');
+                } else {
+                    document.getElementById('tempCard').classList.remove('pulse-animation');
+                }
+            } else {
+                document.getElementById('bpmCard').classList.remove('pulse-animation');
+                document.getElementById('tempCard').classList.remove('pulse-animation');
+            }
+        }
+
+        // Update charts
+        function updateCharts(data) {
+            const currentTime = new Date().toLocaleTimeString();
+            
+            // Add new data
+            healthData.timestamps.push(currentTime);
+            healthData.ecg.push(data.ecg);
+            healthData.bpm.push(data.bpm);
+            healthData.systolic.push(data.systolic);
+            healthData.diastolic.push(data.diastolic);
+            healthData.temperature.push(data.temperature);
+
+            // Limit data points
+            if (healthData.timestamps.length > MAX_CHART_POINTS) {
+                healthData.timestamps.shift();
+                healthData.ecg.shift();
+                healthData.bpm.shift();
+                healthData.systolic.shift();
+                healthData.diastolic.shift();
+                healthData.temperature.shift();
+            }
+
+            // Update ECG Chart
+            charts.ecg.data.labels = healthData.timestamps;
+            charts.ecg.data.datasets[0].data = healthData.ecg;
+            charts.ecg.update('none');
+
+            // Update BPM Chart
+            charts.bpm.data.labels = healthData.timestamps;
+            charts.bpm.data.datasets[0].data = healthData.bpm;
+            charts.bpm.update('none');
+
+            // Update BP Chart
+            charts.bp.data.labels = healthData.timestamps;
+            charts.bp.data.datasets[0].data = healthData.systolic;
+            charts.bp.data.datasets[1].data = healthData.diastolic;
+            charts.bp.update('none');
+
+            // Update Temperature Chart
+            charts.temp.data.labels = healthData.timestamps;
+            charts.temp.data.datasets[0].data = healthData.temperature;
+            charts.temp.update('none');
+        }
+
+        // Simulate fetching data (replace with actual API call)
+        async function fetchHealthData() {
+            try {
+                // For now, we'll simulate data since we don't know if your backend is ready
+                // Replace this with actual fetch call when your backend is ready
+                
+                // Uncomment this when your backend is ready:
+                // const response = await fetch(API_URL);
+                // if (!response.ok) throw new Error('Network response was not ok');
+                // const data = await response.json();
+                
+                // Simulated data for demonstration
+                const data = {
+                    ecg: Math.floor(Math.random() * (800 - 300) + 300),
+                    bpm: Math.random() < 0.8 ? 
+                         Math.floor(Math.random() * (100 - 60) + 60) : 
+                         Math.floor(Math.random() * (180 - 40) + 40),
+                    systolic: Math.floor(Math.random() * (140 - 100) + 100),
+                    diastolic: Math.floor(Math.random() * (90 - 60) + 60),
+                    temperature: Math.round((Math.random() * (38.0 - 36.0) + 36.0) * 10) / 10
+                };
+
+                updateConnectionStatus(true);
+                updateHealthMetrics(data);
+                updateCharts(data);
+                
+                recordCount++;
+                document.getElementById('recordCount').textContent = recordCount;
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+                
+            } catch (error) {
+                console.error('Error fetching health data:', error);
+                updateConnectionStatus(false);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            
+            // Start fetching data
+            fetchHealthData(); // Initial fetch
+            setInterval(fetchHealthData, UPDATE_INTERVAL);
+            
+            console.log('Health Monitor initialized');
+            console.log('API URL:', API_URL);
+            console.log('Update interval:', UPDATE_INTERVAL + 'ms');
+        });
+    </script>
+</body>
+</html>
