@@ -1,0 +1,35 @@
+.env
+.env.local
+frontend/.env.local
+backend/.venv
+.venv
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/test-results/
+frontend/playwright-report/
+frontend/coverage/
+
+*.log
+.DS_Store
+Thumbs.db
+
+# Downloaded medical sources and future derived files.
+# README files stay tracked. Raw sources stay out of git.
+data/raw/**
+!data/raw/**/
+!data/raw/**/README.md
+data/processed/**
+!data/processed/**/
+!data/processed/**/README.md
+data/imports/**
+!data/imports/**/
+!data/imports/**/README.md

@@ -1,0 +1,23 @@
+format-version: 1.2
+data-version: 2026-01-01
+date: 01:01:2026 12:00
+
+[Term]
+id: HP:0000001
+name: All
+def: "Root of the human phenotype ontology." [HPO:probinson]
+
+[Term]
+id: HP:0000256
+name: Macrocephaly
+def: "Occipitofrontal circumference greater than 97th centile." [HPO:probinson]
+synonym: "Large head" EXACT []
+is_a: HP:0000001 ! All
+xref: UMLS:C0221355
+alt_id: HP:0004488
+
+[Term]
+id: HP:0001250
+name: Seizure
+synonym: "Epileptic seizure" RELATED []
+is_a: HP:0000001 ! All

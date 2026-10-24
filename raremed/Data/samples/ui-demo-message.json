@@ -1,0 +1,8 @@
+{
+  "kind": "ui-fixture",
+  "synthetic": true,
+  "id": "interface-check",
+  "locale": "en",
+  "text": "Synthetic interface check. No patient is described. Confirm that this workspace can save a message.",
+  "notice": "Synthetic demonstration text for the chat composer. It does not describe a real person and it is not medical data."
+}

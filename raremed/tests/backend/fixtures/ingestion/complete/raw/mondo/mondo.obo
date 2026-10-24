@@ -1,0 +1,13 @@
+format-version: 1.2
+data-version: 2026-02-02
+
+[Term]
+id: MONDO:0008762
+name: Alexander disease
+def: "A leukodystrophy caused by GFAP variants." [MONDO:test]
+xref: Orphanet:58
+is_a: MONDO:0000001 ! disease
+
+[Term]
+id: MONDO:0000001
+name: disease

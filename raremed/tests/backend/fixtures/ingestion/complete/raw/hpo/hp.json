@@ -1,0 +1,47 @@
+{
+  "graphs" : [ {
+    "id" : "http://purl.obolibrary.org/obo/hp/releases/2026-01-01/hp.json",
+    "meta" : {
+      "basicPropertyValues" : [ {
+        "pred" : "http://www.w3.org/2002/07/owl#versionInfo",
+        "val" : "2026-01-01"
+      } ]
+    },
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/HP_0000001",
+      "lbl" : "All",
+      "type" : "CLASS",
+      "meta" : {
+        "definition" : { "val" : "Root of the human phenotype ontology." }
+      }
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/HP_0000256",
+      "lbl" : "Macrocephaly",
+      "type" : "CLASS",
+      "meta" : {
+        "definition" : { "val" : "Occipitofrontal circumference greater than 97th centile." },
+        "synonyms" : [ { "pred" : "hasExactSynonym", "val" : "Large head" } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "HP:0004488"
+        } ]
+      }
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/HP_0001250",
+      "lbl" : "Seizure",
+      "type" : "CLASS",
+      "meta" : {
+        "synonyms" : [ { "pred" : "hasRelatedSynonym", "val" : "Epileptic seizure" } ]
+      }
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/HP_0000256",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/HP_0000001"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/HP_0001250",
+      "pred" : "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+      "obj" : "http://purl.obolibrary.org/obo/HP_0000001"
+    } ]
+  } ]
+}

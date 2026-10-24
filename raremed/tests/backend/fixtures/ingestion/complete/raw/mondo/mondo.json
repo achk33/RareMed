@@ -1,0 +1,28 @@
+{
+  "graphs" : [ {
+    "id" : "http://purl.obolibrary.org/obo/mondo/releases/2026-02-02/mondo.json",
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/MONDO_0008762",
+      "lbl" : "Alexander disease",
+      "type" : "CLASS",
+      "meta" : {
+        "definition" : { "val" : "A leukodystrophy caused by GFAP variants." },
+        "xrefs" : [ { "val" : "Orphanet:58" }, { "val" : "OMIM:203450" } ],
+        "synonyms" : [ { "pred" : "hasExactSynonym", "val" : "AxD" } ]
+      }
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MONDO_0000001",
+      "lbl" : "disease",
+      "type" : "CLASS"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/HGNC_4236",
+      "lbl" : "GFAP",
+      "type" : "CLASS"
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/MONDO_0008762",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MONDO_0000001"
+    } ]
+  } ]
+}

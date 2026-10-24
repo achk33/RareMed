@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://purl.obolibrary.org/obo/mondo.owl#"
+     xml:base="http://purl.obolibrary.org/obo/mondo.owl"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#">
+  <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/mondo/releases/2026-02-02/mondo.owl"/>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/MONDO_0008762">
+    <rdfs:label xml:lang="en">Alexander disease</rdfs:label>
+    <oboInOwl:hasExactSynonym>AxD</oboInOwl:hasExactSynonym>
+    <oboInOwl:hasDbXref>ORPHA:58</oboInOwl:hasDbXref>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/MONDO_0000001"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/MONDO_0000001">
+    <rdfs:label xml:lang="en">disease</rdfs:label>
+  </owl:Class>
+</rdf:RDF>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JDBOR date="2026-06-23" version="1.3.42 / 4.1.8 [2025-03-03]">
+  <DisorderList count="1">
+    <Disorder id="2">
+      <OrphaCode>58</OrphaCode>
+      <Name lang="en">Alexander disease</Name>
+      <DisorderGeneAssociationList count="1">
+        <DisorderGeneAssociation>
+          <SourceOfValidation>PMID:1</SourceOfValidation>
+          <Gene id="1">
+            <Name lang="en">glial fibrillary acidic protein</Name>
+            <Symbol>GFAP</Symbol>
+            <ExternalReferenceList count="1">
+              <ExternalReference>
+                <Source>HGNC</Source>
+                <Reference>4235</Reference>
+              </ExternalReference>
+            </ExternalReferenceList>
+          </Gene>
+          <DisorderGeneAssociationType id="1">
+            <Name lang="en">Disease-causing germline mutation(s) in</Name>
+          </DisorderGeneAssociationType>
+          <DisorderGeneAssociationStatus id="2">
+            <Name lang="en">Assessed</Name>
+          </DisorderGeneAssociationStatus>
+        </DisorderGeneAssociation>
+      </DisorderGeneAssociationList>
+    </Disorder>
+  </DisorderList>
+</JDBOR>
