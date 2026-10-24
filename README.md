@@ -1,3 +1,7 @@
+Members Name: Achraf Chaouki | Yassine Ouilane
+
+Video Demo: 
+https://drive.google.com/file/d/1Aby9EuFIC1guLS_mAKSiRSeol1CyJTSA/view?usp=sharing
 
 # RareMed AI
 > **Explainable, Graph-Grounded Clinical Decision Support for Rare Diseases**
